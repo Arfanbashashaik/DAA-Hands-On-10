@@ -1,0 +1,93 @@
+class Node:
+    def __init__(self,value):
+        self.value=value
+        self.left_subtree=None
+        self.right_subtree= None
+class BinarySearchTree:
+    def __init__(self):
+        self.root= None
+    def insert(self,value):
+        self.root=self._insert(self.root, value)
+    def _insert(self,node, value):
+        if node is None:
+            return Node(value)
+        if value<node.value:
+            node.left_subtree=self._insert(node.left_subtree,value)
+        elif value > node.value:
+            node.right_subtree= self._insert(node.right_subtree,value)
+        return node
+    def search(self,value):
+        return self._search(self.root, value)
+
+    def _search(self,node,value):
+        if node is None or node.value==value:
+            return node
+        if value<node.value:
+            return self._search(node.left_subtree,value)
+        return self._search(node.right_subtree,value)
+
+    def delete(self,value):
+        self.root =self._delete(self.root,value)
+
+    def _delete(self,node,value):
+        if node is None:
+            return node
+        if value<node.value:
+            node.left_subtree = self._delete(node.left_subtree,value)
+        elif value > node.value:
+            node.right_subtree=self._delete(node.right_subtree,value)
+        else:
+            if node.left_subtree is None:
+                return node.right_subtree
+            elif node.right_subtree is None:
+                return node.left_subtree
+            temp=self._find_min(node.right_subtree)
+            node.value=temp.value
+            node.right_subtree=self._delete(node.right_subtree, temp.value)
+        return node
+    def _find_min(self, node):
+        current=node
+        while current.left_subtree is not None:
+            current=current.left_subtree
+        return current
+    
+    def inorder_traversal(self):
+        result=[]
+        self._inorder_traversal(self.root,result)
+        return result
+
+    def _inorder_traversal(self,node,result):
+        if node:
+            self._inorder_traversal(node.left_subtree,result)
+            result.append(node.value)
+            self._inorder_traversal(node.right_subtree,result)
+if __name__ == "__main__":
+    # Create a new instance of BinarySearchTree
+    bst = BinarySearchTree()
+
+    # Insert different elements 
+    bst.insert(45)
+    bst.insert(20)
+    bst.insert(10)
+    bst.insert(30)
+    bst.insert(75)
+    bst.insert(65)
+    bst.insert(85)
+    # Search for an element
+    print("Searching for 30:",bst.search(30)) 
+    # Delete an element
+    bst.delete(10)
+    # Inorder traversal
+    print("Inorder traversal after deleting 10:",bst.inorder_traversal())  # Should print [20, 30, 45, 65, 75, 85]
+    # Test deleting a node with two children
+    bst.delete(20)
+    print("Inorder traversal after deleting 20:",bst.inorder_traversal())  # Should print [30, 45, 65, 75, 85]
+    # Test deleting a leaf node
+    bst.delete(85)
+    print("Inorder traversal after deleting 85:",bst.inorder_traversal())  # Should print [30, 45, 65, 75]
+    # Test deleting a node with one child
+    bst.delete(75)
+    print("Inorder traversal after deleting 75:",bst.inorder_traversal())  # Should print [30, 45, 65]
+    # Test deleting the root node
+    bst.delete(45)
+    print("Inorder traversal after deleting 45:",bst.inorder_traversal())  # Should print [30, 65]
