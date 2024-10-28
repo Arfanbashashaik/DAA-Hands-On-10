@@ -1,0 +1,123 @@
+class TreeNode:
+    def __init__(self, value, color="RED"):
+        self.value=value
+        self.color=color
+        self.parent=None
+        self.left_subtree= None
+        self.right_subtree =None
+class RedBlackTree:
+    def __init__(self):
+        self.null_node= TreeNode(0)
+        self.null_node.color ="BLACK"
+        self.root=self.null_node
+    def left_rotate(self,node_x):
+        node_y=node_x.right_subtree
+        node_x.right_subtree=node_y.left_subtree
+        if node_y.left_subtree!=self.null_node:
+            node_y.left_subtree.parent=node_x
+        node_y.parent=node_x.parent
+        if node_x.parent is None:
+            self.root=node_y
+        elif node_x==node_x.parent.left_subtree:
+            node_x.parent.left_subtree=node_y
+        else:
+            node_x.parent.right_subtree=node_y
+        node_y.left_subtree=node_x
+        node_x.parent=node_y
+    def right_rotate(self,node_x):
+        node_y=node_x.left_subtree
+        node_x.left_subtree=node_y.right_subtree
+        if node_y.right_subtree!=self.null_node:
+            node_y.right_subtree.parent=node_x
+        node_y.parent=node_x.parent
+        if node_x.parent is None:
+            self.root =node_y
+        elif node_x ==node_x.parent.right_subtree:
+            node_x.parent.right_subtree= node_y
+        else:
+            node_x.parent.left_subtree = node_y
+        node_y.right_subtree= node_x
+        node_x.parent =node_y
+    def insert_fixup(self,present_node):
+        while present_node.parent.color== "RED":
+            if present_node.parent==present_node.parent.parent.right_subtree:
+                uncle_node =present_node.parent.parent.left_subtree
+                if uncle_node.color=="RED":
+                    uncle_node.color="BLACK"
+                    present_node.parent.color="BLACK"
+                    present_node.parent.parent.color="RED"
+                    present_node = present_node.parent.parent
+                else:
+                    if present_node==present_node.parent.left_subtree:
+                        present_node=present_node.parent
+                        self.right_rotate(present_node)
+                    present_node.parent.color="BLACK"
+                    present_node.parent.parent.color="RED"
+                    self.left_rotate(present_node.parent.parent)
+            else:
+                uncle_node = present_node.parent.parent.right_subtree
+                if uncle_node.color=="RED":
+                    uncle_node.color="BLACK"
+                    present_node.parent.color="BLACK"
+                    present_node.parent.parent.color ="RED"
+                    present_node=present_node.parent.parent
+                else:
+                    if present_node==present_node.parent.right_subtree:
+                        present_node=present_node.parent
+                        self.left_rotate(present_node)
+                    present_node.parent.color="BLACK"
+                    present_node.parent.parent.color="RED"
+                    self.right_rotate(present_node.parent.parent)
+            if present_node==self.root:
+                break
+        self.root.color="BLACK"
+
+    def insert(self, value):
+        new_entry=TreeNode(value)
+        new_entry.parent=None
+        new_entry.left_subtree=self.null_node
+        new_entry.right_subtree=self.null_node
+        new_entry.color="RED"
+        parent_tree_node = None
+        temporary_node = self.root
+        while temporary_node!= self.null_node:
+            parent_tree_node= temporary_node
+            if new_entry.value <temporary_node.value:
+                temporary_node =temporary_node.left_subtree
+            else:
+                temporary_node =temporary_node.right_subtree
+
+        new_entry.parent=parent_tree_node
+        if parent_tree_node is None:
+            self.root=new_entry
+        elif new_entry.value<parent_tree_node.value:
+            parent_tree_node.left_subtree=new_entry
+        else:
+            parent_tree_node.right_subtree=new_entry
+        if new_entry.parent is None:
+            new_entry.color="BLACK"
+            return
+        if new_entry.parent.parent is None:
+            return
+        self.insert_fixup(new_entry)
+    def inorder_traversal(self, node):
+        if node != self.null_node:
+            self.inorder_traversal(node.left_subtree)
+            print(f"{node.value} ({node.color})", end=" ")
+            self.inorder_traversal(node.right_subtree)
+#implementation with new values
+rbtree = RedBlackTree()
+rbtree.insert(28)
+rbtree.insert(15)
+rbtree.insert(12)
+rbtree.insert(35)
+rbtree.insert(39)
+rbtree.insert(53)
+rbtree.insert(41)
+rbtree.insert(44)
+rbtree.insert(5)
+rbtree.insert(3)
+rbtree.insert(10)
+rbtree.insert(100)
+# Inorder traversal to display tree structure
+rbtree.inorder_traversal(rbtree.root)
